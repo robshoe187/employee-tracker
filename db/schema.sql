@@ -8,7 +8,7 @@ CREATE TABLE department (
 );
 
 CREATE TABLE roles (
-    id INTEGER AUTO_INCREMENT PRIMARY KEY,
+    id INTEGER AUTO_INCREMENT NOT NULL PRIMARY KEY,
     title VARCHAR(30),
     salary DECIMAL(8,2),
     department_id INTEGER,
@@ -21,10 +21,8 @@ CREATE TABLE employee (
     first_name VARCHAR(30),
     last_name VARCHAR(30),
     role_id INTEGER,
-    CONSTRAINT role_id_fk
     FOREIGN KEY (role_id)
     REFERENCES roles(id)
-    ON DELETE SET NULL
     /*manager_id INTEGER,
     CONSTRAINT manager_id_fk
     FOREIGN KEY (manager_id)
