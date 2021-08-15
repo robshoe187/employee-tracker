@@ -18,7 +18,7 @@ const prompts = () => {
                         console.log(err);
                         return;
                       }
-                      console.table(rows);   
+                      console.table(rows); 
                 })
             }
             else if (action === 'View All Roles') {
@@ -160,49 +160,77 @@ const prompts = () => {
                 }) 
             }
             else if (action === 'Update An Employee Role') {
-                let choice = [];
-                let choiceRole = [];
-                const sqlselect = `SELECT employee.first_name, employee.last_name FROM employee`
-                const sqlselectRole = `SELECT roles.title FROM roles`
-                db.query({sql: sqlselect, rowsAsArray: true }, function(err, results) {
+                
+                const sqlselect = `SELECT employee.*,
+               roles.title AS title,
+               roles.salary AS salary,
+               roles.id AS roleID
+               FROM employee 
+               LEFT JOIN roles 
+               ON employee.role_id = roles.id`
+                db.query(sqlselect, (err, res) => {
                     if (err) {
                         console.log(err);
                         return;
                     }
-                    for (let i = 0; i < results.length; i++) {
-                        choice.push(results[i].join(' '))
-                    };
-                    db.query({sql: sqlselectRole, rowsAsArray: true }, function(err, resultsRole) {
-                        if (err) {
-                            console.log(err);
-                            return;
+                    console.log(res)
+                    let option = []
+                    let employee_id = []
+                    for (let i = 0; i < res.length; i++) {
+                        let employeeString = `${res[i].first_name} ${res[i].last_name} ${res[i].id}`
+                        option.push(employeeString)
+                        employee_id[employeeString] = `${res[i].id}`
+
+                        //console.log(`${res[i].first_name} ${res[i].last_name}`)
                         }
-                        for (let i = 0; i < resultsRole.length; i++) {
-                            choiceRole.push(resultsRole[i].join(' '))
-                        };
+
+
+                    let roleUpdate = []
+                    let roleId = []
+                        for (let i = 0; i < res.length; i++) {
+                            let roleString = `${res[i].title} ${res[i].roleID}`
+                            roleUpdate.push(roleString)
+                            roleId[roleString] = `${res[i].roleID}`
+                        }
+                                
                     inquirer
                     .prompt([
                         {
                         type: 'list',
                         message: 'What employee would you like to update?',
                         name: 'action',
-                        choices: choice
-                      },
-                      {
-                          type:'list',
-                          message: 'What is their new role?',
-                          name: 'role',
-                          choices: choiceRole
-                      }]);
-                  });
-                })
+                        choices: option
+                        },
+                        {
+                            type: 'list',
+                          message: 'What role would like to change to?',
+                          name: 'roleUpdate',
+                          choices: roleUpdate
+                        }
+                    ]).then(update => {
+                         console.log(employee_id[update.action]);
+                         console.log(roleId[update.roleUpdate]);
+
+                       const sqlUpdate = `UPDATE employee
+                       SET role_id =${roleId[update.roleUpdate]}
+                       WHERE id = ${employee_id[update.action]}`
+ 
+                       db.query(sqlUpdate, (err, res)=> {
+                        if (err) {
+                            console.log(err);
+                            return;
+                        }
+                       })
+            
+                     }
+                
+                    )
+                });
             } 
             else {
                 console.log("Not a valid input")
-                prompts();
             }
-        });
-        
+    });    
 };
 
 prompts();

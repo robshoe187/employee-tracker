@@ -13,11 +13,11 @@ VALUES
 ('Sales Lead', 34000.00, 4),
 ('Salesperson',22000.00, 4);
 
-INSERT INTO employee (first_name, last_name, role_id)
+INSERT INTO employee (first_name, last_name, role_id, manager_id )
 VALUES
-('Robert', 'Shoemaker', 1),
-('Krista', 'Comollo', 3),
-('Brian', 'Shoemaker', 2),
-('Mike', 'Hutwagner', 4),
-('Bob', 'Waggonner', 5),
-('John', 'Silhavy', 2);
+('Robert', 'Shoemaker', 1, 2),
+('Krista', 'Comollo', 3, NULL),
+('Brian', 'Shoemaker', 2, 2),
+('Mike', 'Hutwagner', 4, 2),
+('Bob', 'Waggonner', 5, 2),
+('John', 'Silhavy', 2, 2);
